@@ -1,0 +1,34 @@
+Zombie Flood Escape — integração com o UEFN
+==========================================
+
+1. Crie ou abra um projeto de ilha no Unreal Editor for Fortnite (UEFN).
+
+2. Copie a pasta inteira "ZumbiFloodEscape" para o diretório de código Verse do seu
+   projeto (o mesmo tipo de local onde outros arquivos .verse da ilha ficam).
+
+3. Se o compilador Verse reclamar dos imports "using { /ZumbiFloodEscape/... }",
+   o prefixo precisa coincidir com a hierarquia de módulos que o UEFN gerou para
+   a sua ilha. Ajuste o primeiro segmento do caminho para corresponder ao nome do
+   módulo raiz do projeto, ou renomeie a pasta copiada para bater com o que o
+   editor espera.
+
+4. Compile o Verse no UEFN. No navegador de conteúdo, localize o device
+   "zombie_flood_escape_device" e arraste-o para o nível.
+
+5. Configuração mínima no nível:
+   - elimination_manager_device: detecta eliminações de jogadores.
+   - player_spawner_device: usado só como marcador de posição/rotação de respawn.
+   - Lista de damage_volume_device (flood), do nível mais baixo ao mais alto.
+   - Lista de creature_spawner_device (zumbis / criaturas).
+   - mutator_zone_device na área de extração (EnterEvent).
+   - teleporter_device, score_manager_device e accolades_device ligados à extração.
+   - Opcional: popup_dialog_device para anúncio ao extrair.
+   - damage_amplifier_powerup_device e health_powerup_device para upgrades por rodada.
+
+6. Nas opções da ilha, use respawn ilimitado (ou equivalente) para jogadores,
+   para combinar com o respawn rápido via Verse (elimination_manager +
+   agent.Respawn).
+
+7. Faça um playtest: morrer deve chamar respawn em poucos segundos no marcador;
+   o temporizador da rodada cancela o loop de spawn (race); a extração concede
+   pontos e teleporte.
