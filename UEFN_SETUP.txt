@@ -15,6 +15,10 @@ Zombie Flood Escape — integração com o UEFN
 4. Compile o Verse no UEFN. No navegador de conteúdo, localize o device
    "zombie_flood_escape_device" e arraste-o para o nível.
 
+   Opcional: coloque um Timer Device (HUD) no mapa e associe ao campo
+   RoundHudTimer. O script usa a mesma duração que RoundDurationSec no device
+   (SetMaxDuration em Verse). Configure o Timer como countdown visível na HUD.
+
 5. Configuração mínima no nível:
    - elimination_manager_device: detecta eliminações de jogadores.
    - player_spawner_device: usado só como marcador de posição/rotação de respawn.

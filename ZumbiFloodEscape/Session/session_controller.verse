@@ -1,4 +1,5 @@
 using { /Fortnite.com/Characters }
+using { /Fortnite.com/Devices }
 using { /Fortnite.com/Playspaces }
 using { /Verse.org/Simulation }
 using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Combat }
@@ -19,6 +20,9 @@ session_controller<public> := class:
     RoundDurationSec<public>: float = 120.0
     PostRoundPauseSec<public>: float = 2.0
 
+    # Timer HUD do Creative (countdown). Associe no editor ao lado de RoundDurationSec.
+    RoundHudTimer<public>: timer_device = timer_device{}
+
     NotifyExtraction<public>(): void =
         set ExtractionCount += 1
 
@@ -28,6 +32,16 @@ session_controller<public> := class:
                 if (A := FC.GetAgent[]):
                     Upgrades.OnDifficultyMilestone(A, Tier)
 
+    BeginRoundHudTimer<private>(): void =
+        if (RoundHudTimer.IsValid[]):
+            RoundHudTimer.Reset()
+            RoundHudTimer.SetMaxDuration(RoundDurationSec)
+            RoundHudTimer.Start()
+
+    EndRoundHudTimer<private>(): void =
+        if (RoundHudTimer.IsValid[]):
+            RoundHudTimer.Reset()
+
     RunSession<public>(PS: fort_playspace)<suspends>: void =
         set Phase = session_phase.Lobby
         Sleep(1.0)
@@ -35,11 +49,13 @@ session_controller<public> := class:
             set Phase = session_phase.Intermission
             Sleep(IntermissionDurationSec)
             set Phase = session_phase.InRound
+            BeginRoundHudTimer()
             FloodDriver.OnRoundStart(DifficultyTier)
             Waves.OnRoundStart()
             race:
                 Sleep(RoundDurationSec)
                 Waves.RunSpawnLoop(DifficultyTier)
+            EndRoundHudTimer()
             Waves.Stop()
             FloodDriver.OnRoundEnd()
             Waves.OnRoundEnd()

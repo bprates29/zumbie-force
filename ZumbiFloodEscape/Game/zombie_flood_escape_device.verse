@@ -46,6 +46,10 @@ zombie_flood_escape_device := class(creative_device):
     @editable
     PostRoundSec: float = 2.0
 
+    # Countdown visível na HUD; duração é igual a RoundDurationSec (ajuste via Verse ou duração no device).
+    @editable
+    RoundHudTimer: timer_device = timer_device{}
+
     @editable
     ExtractionVolume: mutator_zone_device = mutator_zone_device{}
 
@@ -82,6 +86,7 @@ zombie_flood_escape_device := class(creative_device):
             IntermissionDurationSec := IntermissionSec
             RoundDurationSec := RoundDurationSec
             PostRoundPauseSec := PostRoundSec
+            RoundHudTimer := RoundHudTimer
             FloodDriver := Flood.flood_phase_driver:
                 Stages := FloodVolumes
             Waves := Combat.wave_director:
