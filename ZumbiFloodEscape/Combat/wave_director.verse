@@ -2,11 +2,11 @@ using { /Fortnite.com/Devices }
 using { /Verse.org/Simulation }
 
 # Até N spawners ficam ativos por vez, conforme o orçamento do tier; intervalo diminui com a dificuldade.
-wave_director := class:
-    Spawners: []creature_spawner_device = array{}
-    BaseSpawnIntervalSec: float = 5.0
-    MinSpawnIntervalSec: float = 1.25
-    MaxCreaturesBudgetBase: int = 8
+wave_director<public> := class:
+    Spawners<public>: []creature_spawner_device = array{}
+    BaseSpawnIntervalSec<public>: float = 5.0
+    MinSpawnIntervalSec<public>: float = 1.25
+    MaxCreaturesBudgetBase<public>: int = 8
 
     var IsActive: logic = false
 
@@ -40,7 +40,7 @@ wave_director := class:
                 else:
                     S.Disable()
                 set Idx += 1
-            Interval: float = BaseSpawnIntervalSec
+            var Interval: float = BaseSpawnIntervalSec
             if (Tier > 0):
                 var Step: float = 0.35 * (Tier * 1.0)
                 set Interval = BaseSpawnIntervalSec - Step

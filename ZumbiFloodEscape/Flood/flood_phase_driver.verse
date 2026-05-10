@@ -2,8 +2,8 @@ using { /Fortnite.com/Devices }
 
 # Habilita volumes de dano do “flood” em degraus conforme o tier de dificuldade.
 # Coloque os volumes do mais baixo ao mais alto no array @editable do device raiz.
-flood_phase_driver := class:
-    Stages: []damage_volume_device = array{}
+flood_phase_driver<public> := class:
+    Stages<public>: []damage_volume_device = array{}
 
     OnRoundStart<public>(Tier: int): void =
         if (Stages.Length <= 0):

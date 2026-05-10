@@ -2,12 +2,12 @@ using { /Fortnite.com/Devices }
 using { /Fortnite.com/Playspaces }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /Verse.org/Simulation }
-using { /ZumbiFloodEscape/Combat }
-using { /ZumbiFloodEscape/Extraction }
-using { /ZumbiFloodEscape/Flood }
-using { /ZumbiFloodEscape/Player }
-using { /ZumbiFloodEscape/Progression }
-using { /ZumbiFloodEscape/Session }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Combat }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Extraction }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Flood }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Player }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Progression }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Session }
 
 # Coloque este creative_device na ilha e associe os devices nos campos @editable.
 # Instruções de cópia do código Verse para o UEFN: veja UEFN_SETUP.txt na raiz do repositório.
@@ -70,42 +70,42 @@ zombie_flood_escape_device := class(creative_device):
     @editable
     HealthEveryNTiers: int = 2
 
-    var Session: session_controller = session_controller{}
+    var SessionCtrl: Session.session_controller = Session.session_controller{}
 
-    var Extraction: extraction_manager = extraction_manager{}
+    var ExtractionMgr: Extraction.extraction_manager = Extraction.extraction_manager{}
 
-    var RespawnPolicy: fast_respawn_policy = fast_respawn_policy{}
+    var RespawnPolicy: Player.fast_respawn_policy = Player.fast_respawn_policy{}
 
     OnBegin<override>()<suspends>: void =
         Print("ZFE: Zombie Flood Escape — iniciando sessão.")
-        set Session = session_controller:
+        set SessionCtrl = Session.session_controller:
             IntermissionDurationSec := IntermissionSec
             RoundDurationSec := RoundDurationSec
             PostRoundPauseSec := PostRoundSec
-            Flood := flood_phase_driver:
+            FloodDriver := Flood.flood_phase_driver:
                 Stages := FloodVolumes
-            Waves := wave_director:
+            Waves := Combat.wave_director:
                 Spawners := CreatureSpawners
                 BaseSpawnIntervalSec := WavePulseSeconds
                 MinSpawnIntervalSec := MinWavePulseSeconds
                 MaxCreaturesBudgetBase := WaveBudgetBase
-            Upgrades := upgrade_pickup_router:
+            Upgrades := Progression.upgrade_pickup_router:
                 DamageBoost := DamagePowerup
                 HealthBoost := HealthPowerup
                 GrantHealthEveryNTiers := HealthEveryNTiers
-        set Extraction = extraction_manager:
+        set ExtractionMgr = Extraction.extraction_manager:
             EscapeTeleporter := ExtractionTeleport
             ExtractScore := ExtractionScore
             ExtractAccolade := ExtractionAccolade
             OptionalAnnounce := ExtractionPopup
-        set RespawnPolicy = fast_respawn_policy:
+        set RespawnPolicy = Player.fast_respawn_policy:
             EliminationManager := EliminationManager
             SafeRespawnMarker := SafeRespawnMarker
             DelaySeconds := FastRespawnDelaySec
         RespawnPolicy.Register()
         ExtractionVolume.AgentEntersEvent.Subscribe(OnExtractionEntered)
-        spawn { Session.RunSession(GetPlayspace()) }
+        spawn { SessionCtrl.RunSession(GetPlayspace()) }
 
     OnExtractionEntered(Agent: agent): void =
-        Session.NotifyExtraction()
-        Extraction.RunSequence(Agent)
+        SessionCtrl.NotifyExtraction()
+        ExtractionMgr.RunSequence(Agent)

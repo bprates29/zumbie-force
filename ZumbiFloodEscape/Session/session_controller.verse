@@ -1,23 +1,23 @@
 using { /Fortnite.com/Characters }
 using { /Fortnite.com/Playspaces }
 using { /Verse.org/Simulation }
-using { /ZumbiFloodEscape/Combat }
-using { /ZumbiFloodEscape/Flood }
-using { /ZumbiFloodEscape/Progression }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Combat }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Flood }
+using { /nindogames@fortnite.com/SurvivalZombie/zumbie_force/ZumbiFloodEscape/Progression }
 
 # Intermissão → rodada (timer em race com spawn loop) → fim; tier sobe e upgrades aplicam no fim.
-session_controller := class:
-    Flood: flood_phase_driver = flood_phase_driver{}
-    Waves: wave_director = wave_director{}
-    Upgrades: upgrade_pickup_router = upgrade_pickup_router{}
+session_controller<public> := class:
+    FloodDriver<public>: Flood.flood_phase_driver = Flood.flood_phase_driver{}
+    Waves<public>: Combat.wave_director = Combat.wave_director{}
+    Upgrades<public>: Progression.upgrade_pickup_router = Progression.upgrade_pickup_router{}
 
     var Phase: session_phase = session_phase.Lobby
     var DifficultyTier: int = 0
     var ExtractionCount: int = 0
 
-    IntermissionDurationSec: float = 4.0
-    RoundDurationSec: float = 120.0
-    PostRoundPauseSec: float = 2.0
+    IntermissionDurationSec<public>: float = 4.0
+    RoundDurationSec<public>: float = 120.0
+    PostRoundPauseSec<public>: float = 2.0
 
     NotifyExtraction<public>(): void =
         set ExtractionCount += 1
@@ -35,17 +35,13 @@ session_controller := class:
             set Phase = session_phase.Intermission
             Sleep(IntermissionDurationSec)
             set Phase = session_phase.InRound
-            Flood.OnRoundStart(DifficultyTier)
+            FloodDriver.OnRoundStart(DifficultyTier)
             Waves.OnRoundStart()
             race:
-                block:
-                    Sleep(RoundDurationSec)
-                    0
-                block:
-                    Waves.RunSpawnLoop(DifficultyTier)
-                    0
+                Sleep(RoundDurationSec)
+                Waves.RunSpawnLoop(DifficultyTier)
             Waves.Stop()
-            Flood.OnRoundEnd()
+            FloodDriver.OnRoundEnd()
             Waves.OnRoundEnd()
             set DifficultyTier += 1
             ApplyUpgradesToAllPlayers(PS, DifficultyTier)
